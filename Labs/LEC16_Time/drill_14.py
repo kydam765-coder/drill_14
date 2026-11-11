@@ -11,6 +11,7 @@ FRAME_COUNT = 14
 ANIMATION_FPS = 12.0
 BIRD_WIDTH = 150
 BIRD_HEIGHT = 138
+BIRD_OFFSETS = ((0, 0), (105, 45), (210, -15), (315, 25))
 
 
 class Bird:
@@ -40,11 +41,29 @@ class Bird:
         )
 
 
+class BirdFlock:
+    def __init__(self, image):
+        self.birds = [Bird(image) for _ in BIRD_OFFSETS]
+        self.x = 80.0
+        self.y = 300.0
+
+    def update(self, frame_time):
+        for bird in self.birds:
+            bird.update(frame_time)
+
+    def draw(self):
+        for bird, (offset_x, offset_y) in zip(self.birds, BIRD_OFFSETS):
+            bird.draw(
+                self.x + offset_x + BIRD_WIDTH / 2,
+                self.y + offset_y,
+            )
+
+
 def main():
     open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         image = load_image('bird_animation.png')
-        bird = Bird(image)
+        flock = BirdFlock(image)
         previous_time = time.perf_counter()
         running = True
         while running:
@@ -57,9 +76,9 @@ def main():
                     running = False
                 elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                     running = False
-            bird.update(frame_time)
+            flock.update(frame_time)
             clear_canvas()
-            bird.draw(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+            flock.draw()
             update_canvas()
     finally:
         close_canvas()
