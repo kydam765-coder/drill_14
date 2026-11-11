@@ -9,6 +9,7 @@ FRAME_COLUMNS = 5
 FRAME_ROWS = 3
 FRAME_COUNT = 14
 ANIMATION_FPS = 12.0
+FLIGHT_SPEED_PPS = 180.0
 BIRD_WIDTH = 150
 BIRD_HEIGHT = 138
 BIRD_OFFSETS = ((0, 0), (105, 45), (210, -15), (315, 25))
@@ -46,6 +47,8 @@ class BirdFlock:
         self.birds = [Bird(image) for _ in BIRD_OFFSETS]
         self.x = 80.0
         self.y = 300.0
+        self.direction = 1
+        self.speed_pps = FLIGHT_SPEED_PPS
 
     def update(self, frame_time):
         for bird in self.birds:
