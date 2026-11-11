@@ -15,9 +15,13 @@ FRAME_ROWS = 3
 FRAME_COUNT = 14
 ANIMATION_FPS = 12.0
 FLIGHT_SPEED_PPS = 180.0
-BIRD_WIDTH = 150
-BIRD_HEIGHT = 138
-BIRD_OFFSETS = ((0, 0), (105, 45), (210, -15), (315, 25))
+BIRD_WIDTH = 100
+BIRD_HEIGHT = 92
+BIRD_OFFSETS = tuple(
+    (column * 76, row * 42)
+    for row in range(2)
+    for column in range(5)
+)
 
 
 class Bird:
