@@ -23,18 +23,20 @@ class Bird:
     def update(self, frame_time):
         self.frame = (self.frame + ANIMATION_FPS * frame_time) % FRAME_COUNT
 
-    def draw(self, x, y):
+    def draw(self, x, y, direction):
         column = int(self.frame) % FRAME_COLUMNS
         row = int(self.frame) // FRAME_COLUMNS
         left = round(column * self.image.w / FRAME_COLUMNS)
         right = round((column + 1) * self.image.w / FRAME_COLUMNS)
         top = round(row * self.image.h / FRAME_ROWS)
         bottom = round((row + 1) * self.image.h / FRAME_ROWS)
-        self.image.clip_draw(
+        self.image.clip_composite_draw(
             left,
             self.image.h - bottom,
             right - left,
             bottom - top,
+            0,
+            '' if direction > 0 else 'h',
             x,
             y,
             BIRD_WIDTH,
@@ -78,6 +80,7 @@ class BirdFlock:
             bird.draw(
                 self.x + offset_x + BIRD_WIDTH / 2,
                 self.y + offset_y,
+                self.direction,
             )
 
 
