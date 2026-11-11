@@ -43,16 +43,25 @@ class Bird:
 
 
 class BirdFlock:
-    def __init__(self, image):
+    def __init__(self, image, canvas_width):
         self.birds = [Bird(image) for _ in BIRD_OFFSETS]
         self.x = 80.0
         self.y = 300.0
         self.direction = 1
         self.speed_pps = FLIGHT_SPEED_PPS
+        self.width = max(offset_x for offset_x, _ in BIRD_OFFSETS) + BIRD_WIDTH
+        self.left_bound = 0.0
+        self.right_bound = canvas_width - self.width
 
     def update(self, frame_time):
         distance = self.speed_pps * frame_time
         self.x += self.direction * distance
+        if self.x < self.left_bound:
+            self.x = self.left_bound
+            self.direction = 1
+        elif self.x > self.right_bound:
+            self.x = self.right_bound
+            self.direction = -1
         for bird in self.birds:
             bird.update(frame_time)
 
@@ -68,7 +77,7 @@ def main():
     open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         image = load_image('bird_animation.png')
-        flock = BirdFlock(image)
+        flock = BirdFlock(image, CANVAS_WIDTH)
         previous_time = time.perf_counter()
         running = True
         while running:
