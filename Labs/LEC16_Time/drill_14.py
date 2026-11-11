@@ -2,8 +2,13 @@ import time
 
 from pico2d import *
 
+import game_framework
+import game_world
+from boy import Boy
+from grass import Grass
 
-CANVAS_WIDTH = 1000
+
+CANVAS_WIDTH = 1600
 CANVAS_HEIGHT = 600
 FRAME_COLUMNS = 5
 FRAME_ROWS = 3
@@ -26,10 +31,12 @@ class Bird:
     def draw(self, x, y, direction):
         column = int(self.frame) % FRAME_COLUMNS
         row = int(self.frame) // FRAME_COLUMNS
+
         left = round(column * self.image.w / FRAME_COLUMNS)
         right = round((column + 1) * self.image.w / FRAME_COLUMNS)
         top = round(row * self.image.h / FRAME_ROWS)
         bottom = round((row + 1) * self.image.h / FRAME_ROWS)
+
         self.image.clip_composite_draw(
             left,
             self.image.h - bottom,
@@ -88,10 +95,18 @@ class BirdFlock:
 def main():
     open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
-        image = load_image('bird_animation.png')
-        flock = BirdFlock(image, CANVAS_WIDTH)
+        flock_image = load_image('bird_animation.png')
+        boy = Boy()
+        grass = Grass()
+        flock = BirdFlock(flock_image, CANVAS_WIDTH)
+        flock.x = boy.x - flock.width / 2
+        flock.y = boy.y + 190
+        game_world.add_oject(grass, 0)
+        game_world.add_oject(boy)
+
         previous_time = time.perf_counter()
         running = True
+
         while running:
             current_time = time.perf_counter()
             frame_time = current_time - previous_time
@@ -102,13 +117,21 @@ def main():
                     running = False
                 elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                     running = False
+                else:
+                    boy.handle_event(event)
+
             if not running:
                 break
+
+            game_framework.frame_time = frame_time
+            game_world.update()
             flock.update(frame_time)
             clear_canvas()
+            game_world.render()
             flock.draw()
             update_canvas()
     finally:
+        game_world.clear()
         close_canvas()
 
 
