@@ -51,6 +51,8 @@ class BirdFlock:
         self.speed_pps = FLIGHT_SPEED_PPS
 
     def update(self, frame_time):
+        distance = self.speed_pps * frame_time
+        self.x += self.direction * distance
         for bird in self.birds:
             bird.update(frame_time)
 
