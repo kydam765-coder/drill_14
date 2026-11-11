@@ -55,13 +55,21 @@ class BirdFlock:
 
     def update(self, frame_time):
         distance = self.speed_pps * frame_time
-        self.x += self.direction * distance
-        if self.x < self.left_bound:
-            self.x = self.left_bound
+        travel_range = self.right_bound - self.left_bound
+        phase = (
+            self.x - self.left_bound
+            if self.direction > 0
+            else 2 * travel_range - (self.x - self.left_bound)
+        )
+        phase = (phase + distance) % (2 * travel_range)
+
+        if phase < travel_range:
+            self.x = self.left_bound + phase
             self.direction = 1
-        elif self.x > self.right_bound:
-            self.x = self.right_bound
+        else:
+            self.x = self.right_bound - (phase - travel_range)
             self.direction = -1
+
         for bird in self.birds:
             bird.update(frame_time)
 
